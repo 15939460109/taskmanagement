@@ -1,13 +1,20 @@
 package com.czg.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 
+import java.io.Serializable;
+
 @Data
-public class TaskStaff {
+//序列化的时候不包含某个属性
+@JsonIgnoreProperties(value = "handler")
+public class TaskStaff implements Serializable {
 
     private int staff_id;
-    private int dept_id;
     private String staff_name;
     private String staff_workcode;
     private String staff_password;
+
+    //staff--dept   一对多关系
+    private TaskDept dept;
 }

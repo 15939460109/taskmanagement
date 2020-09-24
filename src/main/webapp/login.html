@@ -3,50 +3,88 @@
 <head>
     <meta charset="UTF-8">
     <title>login</title>
+    <link rel="stylesheet" type="text/css" href="css/themes/default/easyui.css">
+    <link rel="stylesheet" type="text/css" href="css/themes/icon.css">
     <script type="text/javascript" src="js/jquery.min.js"></script>
+    <script type="text/javascript" src="js/jquery-migrate-1.2.1.min.js"></script>
+    <script type="text/javascript" src="js/jquery.easyui.min.js"></script>
     <script type="text/javascript">
         //等页面渲染完执行
-        //$(function () {});
-        //$(document).ready(function () {})//等页面渲染完执行
-        function login() {
-            //document.getElementById("").value;
-            var workcode = $("#staff_workcode").val();
-            var password = $("#staff_password").val();
-            console.log(workcode);
-            console.log(password);
-            $.ajax({
-                //请求地址
-                url:"staff/login",
-                //请求参数
-                data:{"staff_workcode":workcode, "staff_password":password},
-                //请求类型get、post
-                //post协议体传参，长度不限，加密，不读取缓存
-                //get地址栏传参，长度受限，会泄露参数，会用到缓存，速度快
-                type:"post",
-                dataType:"json",
-                async: false,
-                //请求成功响应时执行函数
-                success:function (data) {
-                    if (data.state == "0") {
-                        alert("操作成功");
-                    } else if (data.state == "1") {
-                        alert("操作失败");
+        //方式一
+        $(function () {
+            $("input:button").click(function () {
+                //document.getElementById("").value;
+                var workcode = $("#staff_workcode").val();
+                var password = $("#staff_password").val();
+                $.ajax({
+                    //请求地址
+                    url:"staff/login",
+                    //请求参数
+                    data:{"staff_workcode":workcode, "staff_password":password},
+                    //请求类型get、post
+                    //post协议体传参，长度不限，加密，不读取缓存
+                    //get地址栏传参，长度受限，会泄露参数，会用到缓存，速度快
+                    type:"post",
+                    dataType:"json",
+                    async: false,
+                    //请求成功响应时执行函数
+                    success:function (data) {
+                        if (data != null) {
+                            //TODO easyui的信息提示框
+                            $.messager.alert("提示", "欢迎: " + data.staff_name, 'info', function () {
+                                window.location.href = "index.html";
+                            });
+                        } else {
+                            alert("账号或密码错误!");
+                        }
+                    },
+                    //请求失败执行函数
+                    error:function () {
+                        alert("请求异常，请联系管理员！errorCode:09001");
                     }
-                },
-                //请求失败执行函数
-                error:function () {
-                    alert("请求异常，请联系管理员！errorCode:09001");
-                }
-            })
-        }
+                })
+            });
+        });
+        //方式二
+        // function login() {
+        //     //document.getElementById("").value;
+        //     var workcode = $("#staff_workcode").val();
+        //     var password = $("#staff_password").val();
+        //     $.ajax({
+        //         //请求地址
+        //         url:"staff/login",
+        //         //请求参数
+        //         data:{"staff_workcode":workcode, "staff_password":password},
+        //         //请求类型get、post
+        //         //post协议体传参，长度不限，加密，不读取缓存
+        //         //get地址栏传参，长度受限，会泄露参数，会用到缓存，速度快
+        //         type:"post",
+        //         dataType:"json",
+        //         async: false,
+        //         //请求成功响应时执行函数
+        //         success:function (data) {
+        //             if (data.state == "0") {
+        //                 alert("操作成功");
+        //             } else if (data.state == "1") {
+        //                 alert("操作失败");
+        //             }
+        //         },
+        //         //请求失败执行函数
+        //         error:function () {
+        //             alert("请求异常，请联系管理员！errorCode:09001");
+        //         }
+        //     })
+        // }
     </script>
 </head>
 <body class="easyui-layout">
-    <div data-options="region:'north',border:false" style="height:60px;background:#B3DFDA;padding:10px">登录界面</div>
-    <div data-options="region:'center',title:'Center'">
-        账户:<input type="text" id="staff_workcode"><br>
-        密码:<input type="password" id="staff_password"><br>
-        <input type="button" value="登录" onclick="login()">
+    <div data-options="region:'north',border:false" style="height:60px;background:#B3DFDA;padding:10px;">
+        <h3>登录界面</h3>
+    </div>
+    <div data-options="region:'center'">
+        <p>账户:<input type="text" id="staff_workcode"></p>
+        <p>密码:<input type="password" id="staff_password"></p>
+        <input type="button" value="登录">
     </div>
 </body>
 </html>

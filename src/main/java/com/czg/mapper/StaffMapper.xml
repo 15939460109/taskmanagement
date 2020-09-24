@@ -3,7 +3,5 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.czg.dao.IStaffDao">
-    <select id="read" parameterType="string" resultType="com.czg.domain.TaskStaff">
-        SELECT STAFF_ID, DEPT_ID, STAFF_NAME, STAFF_WORKCODE, STAFF_PASSWORD FROM TASK_STAFF WHERE STAFF_WORKCODE = #{workcode}
-    </select>
+
 </mapper>
