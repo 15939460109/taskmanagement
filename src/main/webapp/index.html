@@ -5,17 +5,67 @@
     <title>任务跟踪管理系统</title>
     <link rel="stylesheet" type="text/css" href="css/themes/default/easyui.css">
     <link rel="stylesheet" type="text/css" href="css/themes/icon.css">
-    <script type="text/javascript" src="js/jquery.min.js"></script>
+    <script src="js/jquery-1.10.2.min.js"></script>
     <script type="text/javascript" src="js/jquery-migrate-1.2.1.min.js"></script>
     <script type="text/javascript" src="js/jquery.easyui.min.js"></script>
     <script type="text/javascript" src="js/jquery.fullcalendar.js?v=0.7"></script>
+    <script type="text/javascript" >
+        $(function(){
+            $('#win').window('close');
+            //向后台请求找寻数据库中的任务级别
+            $.ajax({
+                type: "get",
+                url: "staff/selectTaskLevel",
+                dataType:"json",
+                async: false,
+                success: function (data) {
+                    if (data != null) {
+                        $.each(data, function (index, ele) {
+                            $("<option value = '"+ ele.level_id + "'>" + ele.level_name + "</option>").appendTo("#taskLevel")
+                        });
+                    }
+                },
+                error: function () {
+                    alert("请求异常，请联系管理员！");
+                }
+            })
+        })
+    </script>
 </head>
 <body class="easyui-layout">
-    <div data-options="region:'north',border:false" style="height:60px;background:#B3DFDA;padding:10px">north region</div>
-    <!--添加左侧按钮菜单-->
-    <div data-options="region:'west',split:true,title:'West'" style="width:150px;padding:10px;">west content</div>
-    <div data-options="region:'center',title:'Center'">
+    <div data-options="region:'north',border:false" style="height:60px;background:#B3DFDA;padding:10px">
+        <h3>主页</h3>
+    </div>
+    <div data-options="region:'west',split:true,title:'菜单'" style="width:150px;padding:10px;">
+        <a class="easyui-linkbutton" style="width: 100%; margin: 10px 0" data-options="iconCls:'icon-man'" >任务派发</a>
+        <a class="easyui-linkbutton" style="width: 100%; margin: 10px 0" data-options="iconCls:'icon-search'" >个人查询</a>
+        <a class="easyui-linkbutton" style="width: 100%; margin: 10px 0" data-options="iconCls:'icon-large-chart'" >统计报表</a>
+        <a class="easyui-linkbutton" style="width: 100%; margin: 10px 0" data-options="iconCls:'icon-large-shapes'" >权限设置</a>
+    </div>
+    <div data-options="region:'center',title:'任务管理'">
         <div class="easyui-fullCalendar" fit="true"></div>
+    </div>
+
+    <div id="win" class="easyui-window" title="任务创建" style="width:600px;height:400px"
+         data-options="iconCls:'icon-save',modal:true">
+        <div style="margin: 20px 160px">
+            任务时间: <input type="text" id="taskTime" disabled><br>
+        </div>
+        <div style="margin: 20px 160px">
+            任务名称: <input type="text" id="taskName">
+        </div>
+        <div style="margin: 20px 160px;position: relative">
+            任务描述: <textarea id="taskDetail" rows="4" cols="21" style="vertical-align:top"></textarea>
+        </div>
+        <div style="margin: 20px 160px">
+            任务级别:
+            <select id="taskLevel" name="level" style="width: 100px; height: 25px; padding: 0 25px; margin: 0;"></select>
+        </div>
+        <div style="margin: 20px 160px">
+            任务状态: <input id="taskState" type="text">
+        </div>
+        <a style="margin-top: 10px; margin-left: 230px" class="easyui-linkbutton" iconCls="icon-ok"></a>
+        <a style="margin-top: 10px; margin-left: 60px" class="easyui-linkbutton" iconCls="icon-cancel" onclick="$('#win').window('close');"></a>
     </div>
 </body>
 </html>

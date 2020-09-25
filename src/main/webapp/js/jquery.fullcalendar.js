@@ -881,30 +881,56 @@
 				if (info && (info.lunarFestival || info.solarFestival)) {
 					day.addClass('festival');
 				}
+				//CZG	取消日历页每个格子原本的hover事件，添加鼠标双击事件和新的hover事件
+				// day.hover(function (e) {
+				// 	clearTimeout(hideTimer);
+				// 	var inf = $(this).data('info');
+				// 	if (inf) {
+				// 		var ct = '<font color="#ffffff" style="font-size:9pt;">' + inf.sYear
+				// 			 + ' 年 ' + inf.sMonth + ' 月 ' + inf.sDay + ' 日<br>星期' + inf.week
+				// 			 + '<br><font color="violet">农历 ' + monthName[inf.lMonth - 1] + ' 月 ' + cDay(inf.lDay, inf.lMonth,true)
+				// 			 + ' 日</font><br><font color="yellow">' + inf.cYear + '年 ' + inf.cMonth + '月 ' + inf.cDay + '日</font></font>';
+				// 		detail.html(ct);
+				// 		detail.css(calculatePos.call(target, detail, e.currentTarget)).fadeIn();
+				// 		if (inf.lunarFestival) {
+				// 			detail.append('<div class="lunarFestival">' + inf.lunarFestival + '</div>');
+				// 		}
+				// 		if (inf.solarFestival) {
+				// 			detail.append('<div class="solarFestival">' + inf.solarFestival + '</div>');
+				// 		}
+				// 	} else {
+				// 		detail.hide();
+				// 	}
+				// }, function () {
+				// 	hideTimer = setTimeout(function () {
+				// 			$('div.fullcalendar-detail').hide();
+				// 		}, 500);
+				// });
+				//新的hover事件
 				day.hover(function (e) {
 					clearTimeout(hideTimer);
 					var inf = $(this).data('info');
 					if (inf) {
 						var ct = '<font color="#ffffff" style="font-size:9pt;">' + inf.sYear
-							 + ' 年 ' + inf.sMonth + ' 月 ' + inf.sDay + ' 日<br>星期' + inf.week
-							 + '<br><font color="violet">农历 ' + monthName[inf.lMonth - 1] + ' 月 ' + cDay(inf.lDay, inf.lMonth,true)
-							 + ' 日</font><br><font color="yellow">' + inf.cYear + '年 ' + inf.cMonth + '月 ' + inf.cDay + '日</font></font>';
+							+ ' 年 ' + inf.sMonth + ' 月 ' + inf.sDay + ' 日 星期' + inf.week
+							+ '</font>';
 						detail.html(ct);
 						detail.css(calculatePos.call(target, detail, e.currentTarget)).fadeIn();
-						if (inf.lunarFestival) {
-							detail.append('<div class="lunarFestival">' + inf.lunarFestival + '</div>');
-						}
-						if (inf.solarFestival) {
-							detail.append('<div class="solarFestival">' + inf.solarFestival + '</div>');
-						}
+						detail.append('<div class="">' + "欢迎: 张三" + '</div>');
 					} else {
 						detail.hide();
 					}
 				}, function () {
 					hideTimer = setTimeout(function () {
-							$('div.fullcalendar-detail').hide();
-						}, 500);
+						$('div.fullcalendar-detail').hide();
+					}, 500);
 				});
+				//鼠标双击事件
+				day.dblclick(function (e) {
+					var inf = $(this).data('info');
+					$('#win').window('open');
+					$('#taskTime').prop("value", inf.sYear + "/" + inf.sMonth + "/" + inf.sDay);
+				})
 			}
 		}
 		t.find('td[abbr^="' + opts.year + ',' + opts.month + '"]').removeClass('calendar-other-month');

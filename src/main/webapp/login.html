@@ -30,7 +30,6 @@
                     //请求成功响应时执行函数
                     success:function (data) {
                         if (data != null) {
-                            //TODO easyui的信息提示框
                             $.messager.alert("提示", "欢迎: " + data.staff_name, 'info', function () {
                                 window.location.href = "index.html";
                             });
@@ -40,7 +39,7 @@
                     },
                     //请求失败执行函数
                     error:function () {
-                        alert("请求异常，请联系管理员！errorCode:09001");
+                        alert("请求异常，请联系管理员！");
                     }
                 })
             });
@@ -82,8 +81,8 @@
         <h3>登录界面</h3>
     </div>
     <div data-options="region:'center'">
-        <p>账户:<input type="text" id="staff_workcode"></p>
-        <p>密码:<input type="password" id="staff_password"></p>
+        <p>账户: <input type="text" id="staff_workcode"></p>
+        <p>密码: <input type="password" id="staff_password"></p>
         <input type="button" value="登录">
     </div>
 </body>
