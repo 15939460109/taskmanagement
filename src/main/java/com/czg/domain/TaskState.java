@@ -8,10 +8,10 @@ import java.io.Serializable;
 @Data
 //序列化的时候不包含某个属性
 @JsonIgnoreProperties(value = "handler")
-public class TaskLevel implements Serializable {
+public class TaskState implements Serializable {
 
-    private static final long serialVersionUID = 6774990677491791788L;
+    private static final long serialVersionUID = 7570561321353379274L;
 
-    private int level_id;
-    private String level_name;
+    private int state_id;
+    private String state_name;
 }

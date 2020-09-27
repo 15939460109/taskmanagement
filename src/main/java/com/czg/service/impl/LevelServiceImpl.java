@@ -1,7 +1,8 @@
-package com.czg.service;
+package com.czg.service.impl;
 
 import com.czg.dao.LevelDao;
 import com.czg.domain.TaskLevel;
+import com.czg.service.ILevelService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

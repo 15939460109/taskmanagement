@@ -10,6 +10,8 @@ import java.io.Serializable;
 @JsonIgnoreProperties(value = "handler")
 public class TaskStaff implements Serializable {
 
+    private static final long serialVersionUID = 623139805081034555L;
+
     private int staff_id;
     private String staff_name;
     private String staff_workcode;

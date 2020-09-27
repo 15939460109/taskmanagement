@@ -11,24 +11,109 @@
     <script type="text/javascript" src="js/jquery.fullcalendar.js?v=0.7"></script>
     <script type="text/javascript" >
         $(function(){
+            //页面加载完成后隐藏任务派发窗体
             $('#win').window('close');
-            //向后台请求找寻数据库中的任务级别
+            //注册事件
+            //关闭操作
+            $('#closeForm').click(function (e) {
+                //关闭任务派发窗体
+                $('#win').window('close');
+            });
+            //提交操作
+            $("#submitTask").click(function () {
+                //id:    taskTime  taskName  taskDetail  staff  taskLevel  taskState
+                //name:  taskTime  taskName  taskDetail  staff  level      state
+                var taskTime = $("#taskTime").val();
+                var taskName = $("#taskName").val();
+                var taskDetail = $("#taskDetail").val();
+                var staff = $("#staff").val();
+                var taskLevel = $("#taskLevel").val();
+                var taskState = $("#taskState").val();
+                $.ajax({
+                    type: "post",
+                    url: "staff/addTaskInfo",
+                    data: {
+                        "taskTime": taskTime,
+                        "taskName": taskName,
+                        "taskDetail": taskDetail,
+                        "staff": staff,
+                        "taskLevel": taskLevel,
+                        "taskState": taskState
+                    },
+                    dataType:"json",
+                    async: false,
+                    success: function (data) {
+                        if (data != null) {
+                            alert(data.result);
+                            //刷新页面
+                            window.location.href = "index.html";
+                        }
+                    },
+                    error: function () {
+                        alert("请求异常，请联系管理员！");
+                    }
+                });
+            });
+            //向后台请求找寻数据库中所有的任务级别
             $.ajax({
                 type: "get",
                 url: "staff/selectTaskLevel",
+                dataType:"json",
+                async: false,   //默认时true 异步请求    为false时 同步请求
+                success: function (data) {
+                    if (data != null) {
+                        $.each(data, function (index, ele) {
+                            $("<option value = '"+ ele.level_id + "'>" + ele.level_name + "</option>").appendTo("#taskLevel");
+                        });
+                    }
+                }
+            });
+            //向后台请求找寻数据库中所有的任务状态
+            $.ajax({
+                type: "get",
+                url: "staff/selectTaskState",
                 dataType:"json",
                 async: false,
                 success: function (data) {
                     if (data != null) {
                         $.each(data, function (index, ele) {
-                            $("<option value = '"+ ele.level_id + "'>" + ele.level_name + "</option>").appendTo("#taskLevel")
+                            $("<option value = '"+ ele.state_id + "'>" + ele.state_name + "</option>").appendTo("#taskState");
                         });
                     }
-                },
-                error: function () {
-                    alert("请求异常，请联系管理员！");
                 }
-            })
+            });
+            //向后台请求找寻数据库中所有的部门信息
+            $.ajax({
+                type: "get",
+                url: "staff/selectTaskDept",
+                dataType:"json",
+                async: false,
+                success: function (data) {
+                    if (data != null) {
+                        $.each(data, function (index, ele) {
+                            $("<option value = '"+ ele.dept_id + "'>" + ele.dept_name + "</option>").appendTo("#staffDept");
+                        });
+                    }
+                }
+            });
+            //向后台请求找寻数据库中某个部门的所有成员信息
+            $("#staffDept").blur(function (e) {
+                $("#staff").children().remove();
+                $.ajax({
+                    type: "post",
+                    url: "staff/selectTaskStaff",
+                    data: {"dept_id": $(e.target).val()},
+                    dataType:"json",
+                    async: false,
+                    success: function (data) {
+                        if (data != null) {
+                            $.each(data, function (index, ele) {
+                                $("<option value = '"+ ele.staff_id + "'>" + ele.staff_name + "</option>").appendTo("#staff");
+                            });
+                        }
+                    }
+                });
+            });
         })
     </script>
 </head>
@@ -49,23 +134,28 @@
     <div id="win" class="easyui-window" title="任务创建" style="width:600px;height:400px"
          data-options="iconCls:'icon-save',modal:true">
         <div style="margin: 20px 160px">
-            任务时间: <input type="text" id="taskTime" disabled><br>
+            任务时间: <input type="text" id="taskTime" name="taskTime" disabled><br>
         </div>
         <div style="margin: 20px 160px">
-            任务名称: <input type="text" id="taskName">
+            任务名称: <input type="text" id="taskName" name="taskName">
         </div>
-        <div style="margin: 20px 160px;position: relative">
-            任务描述: <textarea id="taskDetail" rows="4" cols="21" style="vertical-align:top"></textarea>
+        <div style="margin: 20px 160px">
+            任务描述: <textarea id="taskDetail" name="taskDetail" rows="4" cols="21" style="vertical-align:top"></textarea>
+        </div>
+        <div style="margin: 20px 160px">
+            指派人:
+            <select name="dept" id="staffDept" style="width: 100px; height: 25px; padding-left: 20px"></select>
+            <select name="staff" id="staff" style="width: 100px; height: 25px; padding-left: 25px; margin-left: 20px"></select>
         </div>
         <div style="margin: 20px 160px">
             任务级别:
-            <select id="taskLevel" name="level" style="width: 100px; height: 25px; padding: 0 25px; margin: 0;"></select>
+            <select id="taskLevel" name="level" style="width: 120px; height: 25px; padding-left: 35px"></select>
         </div>
         <div style="margin: 20px 160px">
-            任务状态: <input id="taskState" type="text">
+            任务状态: <select id="taskState" name="state" style="width: 140px; height: 25px; padding-left: 45px"></select>
         </div>
-        <a style="margin-top: 10px; margin-left: 230px" class="easyui-linkbutton" iconCls="icon-ok"></a>
-        <a style="margin-top: 10px; margin-left: 60px" class="easyui-linkbutton" iconCls="icon-cancel" onclick="$('#win').window('close');"></a>
+        <a id="submitTask" style="margin-left: 230px" class="easyui-linkbutton" iconCls="icon-ok"></a>
+        <a id="closeForm" style="margin-left: 60px" class="easyui-linkbutton" iconCls="icon-cancel"></a>
     </div>
 </body>
 </html>

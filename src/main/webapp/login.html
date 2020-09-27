@@ -20,7 +20,10 @@
                     //请求地址
                     url:"staff/login",
                     //请求参数
-                    data:{"staff_workcode":workcode, "staff_password":password},
+                    data:{
+                        "staff_workcode":workcode,
+                        "staff_password":password
+                    },
                     //请求类型get、post
                     //post协议体传参，长度不限，加密，不读取缓存
                     //get地址栏传参，长度受限，会泄露参数，会用到缓存，速度快

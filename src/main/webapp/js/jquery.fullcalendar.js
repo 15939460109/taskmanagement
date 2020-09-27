@@ -845,12 +845,23 @@
 		
 		var t = $('<table cellspacing="0" cellpadding="0" border="0"><thead></thead><tbody></tbody></table>').prependTo(body);
 		var tr = $('<tr></tr>').appendTo(t.find('thead'));
-		for (var i = opts.firstDay; i < opts.weeks.length; i++) {
-			tr.append('<th>' + opts.weeks[i] + '</th>');
-		}
-		for (var i = 0; i < opts.firstDay; i++) {
-			tr.append('<th>' + opts.weeks[i] + '</th>');
-		}
+		//CZG   将星期的英文缩写改成中文
+		// for (var i = opts.firstDay; i < opts.weeks.length; i++) {
+		// 	tr.append('<th>' + opts.weeks[i] + '</th>');
+		// }
+		// for (var i = 0; i < opts.firstDay; i++) {
+		// 	tr.append('<th>' + opts.weeks[i] + '</th>');
+		// }
+        tr.append('<th>星期日</th>');
+        tr.append('<th>星期一</th>');
+        tr.append('<th>星期二</th>');
+        tr.append('<th>星期三</th>');
+        tr.append('<th>星期四</th>');
+        tr.append('<th>星期五</th>');
+        tr.append('<th>星期六</th>');
+
+        //CZG  定义一个变量，用来存放登陆人当年当月的所有任务信息
+        var userTaskInfoEveryMonth = [];
 		
 		var weeks = getWeeks(target, opts.year, opts.month);
 		var currentCa = new Calendar(opts.year, opts.month - 1);
@@ -878,9 +889,11 @@
 					}
 				}
 				var day = $('<td class="calendar-day fullcalendar-day calendar-other-month"></td>').data('info', info).attr('abbr', day[0] + ',' + day[1] + ',' + day[2]).html(dayHtml).appendTo(tr);
-				if (info && (info.lunarFestival || info.solarFestival)) {
-					day.addClass('festival');
-				}
+				//CZG	取消节日日历框显示星星的样式，改为当天有任务日历框显示星星
+				// if (info && (info.lunarFestival || info.solarFestival)) {
+				// 	day.addClass('festival');
+				// }
+
 				//CZG	取消日历页每个格子原本的hover事件，添加鼠标双击事件和新的hover事件
 				// day.hover(function (e) {
 				// 	clearTimeout(hideTimer);
@@ -906,7 +919,39 @@
 				// 			$('div.fullcalendar-detail').hide();
 				// 		}, 500);
 				// });
-				//新的hover事件
+                //CZG  向后台请求登陆人当年当月的所有任务信息
+                if (info != null && info.sDay == '1') {
+                    $.ajax({
+                        type: "post",
+                        url: "/staff/selectTaskInfo",
+                        data: {
+                            "year": info.sYear,
+                            "month": info.sMonth
+                        },
+                        dataType: "json",
+                        async: false,
+                        success: function (data) {
+                            if (data != null) {
+                                data.forEach(function (item, index) {
+                                    var obj = {};
+                                    obj.info_name = item.info_name;
+                                    obj.info_desc = item.info_desc;
+                                    obj.send_staff_name = item.sendStaff.staff_name;
+                                    obj.info_create_day = item.info_create_date.split("-")[2];
+                                    userTaskInfoEveryMonth.push(obj);
+                                })
+                            }
+                        }
+                    });
+                }
+                //CZG  当天有任务日历框显示星星
+				userTaskInfoEveryMonth.forEach(function (item, index) {
+					var currentDay = day.attr('abbr').split(",")[2];
+					if (item.info_create_day == currentDay) {
+						day.addClass('festival');
+					}
+				});
+				//CZG  新的hover事件
 				day.hover(function (e) {
 					clearTimeout(hideTimer);
 					var inf = $(this).data('info');
@@ -916,7 +961,13 @@
 							+ '</font>';
 						detail.html(ct);
 						detail.css(calculatePos.call(target, detail, e.currentTarget)).fadeIn();
-						detail.append('<div class="">' + "欢迎: 张三" + '</div>');
+						//CZG  显示这天的任务信息
+                        userTaskInfoEveryMonth.forEach(function (item, index) {
+                        	if (item.info_create_day != inf.sDay) {
+                        		return;
+							}
+							detail.append('<div style="text-align: left">' + "任务名: " + item.info_name + '<br>' + "任务描述: " + item.info_desc + '<br>' + "任务发布人: " + item.send_staff_name + '</div>');
+						});
 					} else {
 						detail.hide();
 					}
@@ -925,11 +976,11 @@
 						$('div.fullcalendar-detail').hide();
 					}, 500);
 				});
-				//鼠标双击事件
+				//CZG  鼠标双击事件
 				day.dblclick(function (e) {
 					var inf = $(this).data('info');
 					$('#win').window('open');
-					$('#taskTime').prop("value", inf.sYear + "/" + inf.sMonth + "/" + inf.sDay);
+					$('#taskTime').prop("value", inf.sYear + "-" + inf.sMonth + "-" + inf.sDay);
 				})
 			}
 		}
