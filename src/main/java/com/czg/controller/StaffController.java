@@ -2,6 +2,7 @@ package com.czg.controller;
 
 import com.czg.domain.*;
 import com.czg.service.*;
+import com.czg.util.CookieUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -36,7 +37,6 @@ public class StaffController {
         String password = request.getParameter("staff_password");
         TaskStaff staff = staffService.checkUser(workcode, password);
         if (staff != null) {
-            session.setAttribute("user", staff);
             //创建cookie
             Cookie cookie = new Cookie("userId", String.valueOf(staff.getStaff_id()));
             cookie.setMaxAge(120);//设置session的最大活跃时间
@@ -73,12 +73,16 @@ public class StaffController {
 
     @RequestMapping("/selectTaskInfo")
     @ResponseBody
-    public List<TaskInfo> selectTaskInfo(HttpSession session, HttpServletRequest request) {
-        int staff_id = ((TaskStaff) session.getAttribute("user")).getStaff_id();
+    public List<TaskInfo> selectTaskInfo(HttpServletRequest request) {
+        Cookie cookie = CookieUtil.getCookie(request, "userId");
+        String staff_id = "";
+        if (cookie != null) {
+            staff_id = cookie.getValue();
+        }
         Calendar cal = Calendar.getInstance();
         int year = cal.get(Calendar.YEAR);
         int month = cal.get(Calendar.MONTH) + 1;
-        return infoService.selectTaskInfo(staff_id, year, month);
+        return infoService.selectTaskInfo(Integer.parseInt(staff_id), year, month);
     }
 
     @RequestMapping("/addTaskInfo")
@@ -87,7 +91,11 @@ public class StaffController {
         Map<String, String> map = new HashMap<>();
         //name:  taskTime  taskName  taskDetail  staff  level      state
         //注意session必须包含登录信息，否则会产生NullPointerException
-        int sendStaff_id = ((TaskStaff) session.getAttribute("user")).getStaff_id();
+        Cookie cookie = CookieUtil.getCookie(request, "userId");
+        String staff_id = "";
+        if (cookie != null) {
+            staff_id = cookie.getValue();
+        }
         String receiveStaff_id = request.getParameter("staff");
         String taskTime = request.getParameter("taskTime");
         String taskName = request.getParameter("taskName");
@@ -96,7 +104,7 @@ public class StaffController {
         String state_id = request.getParameter("taskState");
         //创建外键id对应实体类，并将值放入
         TaskStaff sendStaff = new TaskStaff();
-        sendStaff.setStaff_id(sendStaff_id);
+        sendStaff.setStaff_id(Integer.parseInt(staff_id));
         TaskStaff receiveStaff = new TaskStaff();
         receiveStaff.setStaff_id(Integer.parseInt(receiveStaff_id));
         TaskLevel level = new TaskLevel();

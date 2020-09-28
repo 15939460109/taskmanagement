@@ -28,7 +28,7 @@ public interface IInfoDao {
             }
     )
 
-    @Select("SELECT INFO_NAME, SENDSTAFF, INFO_DESC, INFO_CREATE_DATE, LEVEL_ID, STATE_ID FROM TASK_INFO WHERE RECEIVESTAFF = #{staff_id} AND YEAR(INFO_CREATE_DATE) = #{year} AND MONTH(INFO_CREATE_DATE) = #{month}")
+    @Select("SELECT INFO_NAME, SENDSTAFF, INFO_DESC, INFO_CREATE_DATE, LEVEL_ID, STATE_ID FROM TASK_INFO WHERE RECEIVESTAFF = #{staff_id} AND YEAR(INFO_CREATE_DATE) = #{year} AND MONTH(INFO_CREATE_DATE) = #{month} ORDER BY DAY(INFO_CREATE_DATE)")
     List<TaskInfo> selectTaskInfo(@Param("staff_id") int staff_id, @Param("year") int year, @Param("month") int month);
 
     @Select("SELECT STAFF_NAME FROM TASK_STAFF WHERE STAFF_ID = #{sendStaff}")

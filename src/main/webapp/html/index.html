@@ -24,9 +24,19 @@
             text-align: center;
         }
 
-        #prev, #next {
-            color: blue;
-            cursor: pointer;
+        .redBg {
+            background-color: red;
+            opacity: 0.6;
+        }
+
+        .yellowBg {
+            background-color: yellow;
+            opacity: 0.6;
+        }
+
+        .greenBg {
+            background-color: green;
+            opacity: 0.6;
         }
 
     </style>
@@ -68,7 +78,7 @@
                         if (data != null) {
                             alert(data.result);
                             //刷新页面
-                            window.location.href = "html/index.html";
+                            window.location.href = "index.html";
                         }
                     },
                     error: function () {
@@ -83,7 +93,9 @@
                 $('#taskTime').prop("value", date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate());
             });
             //个人查询按钮操作
-            $("#personalQuery").click(function () {
+            //任务管控按钮操作
+            //统计报表按钮操作
+            $("#statisticalCopy").click(function () {
                 $('#win2').window('open');
                 //查询数据
                 $.ajax({
@@ -93,7 +105,17 @@
                     async: false,
                     success: function (data) {
                         data.forEach(function (item, index) {
-                            $("<tr><td>" + item.info_name + "</td><td>" + item.sendStaff.staff_name + "</td><td>" + item.staffLevel.level_name + "</td><td>" + item.info_create_date + "</td><td>" + item.staffState.state_name + "</td></tr>").appendTo("#tbody");
+                            var tr = $("<tr></tr>");
+                            tr.appendTo("#tbody");
+                            $("<td>" + item.info_name + "</td><td>" + item.sendStaff.staff_name + "</td><td>" + item.staffLevel.level_name + "</td><td>" + item.info_create_date + "</td><td>" + item.staffState.state_name + "</td>").appendTo(tr);
+                            //根据任务状态的不同添加样式
+                            if (item.staffState.state_name == '已完成') {
+                                tr.addClass("greenBg");
+                            } else if (item.staffState.state_name == '进行中') {
+                                tr.addClass("yellowBg");
+                            } else if (item.staffState.state_name == '延期中') {
+                                tr.addClass("redBg");
+                            }
                         })
                     }
                 });

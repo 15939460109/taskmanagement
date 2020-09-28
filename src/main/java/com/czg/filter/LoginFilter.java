@@ -1,5 +1,7 @@
 package com.czg.filter;
 
+import com.czg.util.CookieUtil;
+
 import javax.servlet.*;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -30,16 +32,9 @@ public class LoginFilter implements Filter {
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
         String requestName = ((HttpServletRequest) servletRequest).getRequestURI();
-        String userId = "";
-        //找寻userId的cookie
-        Cookie[] cookies = ((HttpServletRequest) servletRequest).getCookies();
-        for (Cookie cookie : cookies) {
-            if (cookie.getName().equals("userId")) {
-                userId = cookie.getValue();
-            }
-        }
-        //判断userId是否有值
-        if ("".equals(userId) && !isIgnore(requestName)) {
+        Cookie cookie = CookieUtil.getCookie((HttpServletRequest) servletRequest, "userId");
+        //判断名为userId的cookie是否有值
+        if (cookie != null && "".equals(cookie.getValue()) && !isIgnore(requestName)) {
             //重定向
             ((HttpServletResponse) servletResponse).sendRedirect("/login.html");
         } else {
