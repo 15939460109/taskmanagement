@@ -924,10 +924,6 @@
                     $.ajax({
                         type: "post",
                         url: "/staff/selectTaskInfo",
-                        data: {
-                            "year": info.sYear,
-                            "month": info.sMonth
-                        },
                         dataType: "json",
                         async: false,
                         success: function (data) {
@@ -979,7 +975,7 @@
 				//CZG  鼠标双击事件
 				day.dblclick(function (e) {
 					var inf = $(this).data('info');
-					$('#win').window('open');
+					$('#win1').window('open');
 					$('#taskTime').prop("value", inf.sYear + "-" + inf.sMonth + "-" + inf.sDay);
 				})
 			}

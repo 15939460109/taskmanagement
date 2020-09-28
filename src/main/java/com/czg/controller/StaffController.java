@@ -7,11 +7,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 //DEBUG调试，F6下一步  F8跳出当前断点
 @Controller
@@ -31,11 +31,18 @@ public class StaffController {
 
     @RequestMapping("/login")
     @ResponseBody
-    public TaskStaff login(HttpSession session, HttpServletRequest request) {
+    public TaskStaff login(HttpSession session, HttpServletRequest request, HttpServletResponse response) {
         String workcode = request.getParameter("staff_workcode");
         String password = request.getParameter("staff_password");
         TaskStaff staff = staffService.checkUser(workcode, password);
-        session.setAttribute("user", staff);
+        if (staff != null) {
+            session.setAttribute("user", staff);
+            //创建cookie
+            Cookie cookie = new Cookie("userId", String.valueOf(staff.getStaff_id()));
+            cookie.setMaxAge(120);//设置session的最大活跃时间
+            cookie.setPath("/");
+            response.addCookie(cookie);
+        }
         return staff;
     }
 
@@ -68,8 +75,9 @@ public class StaffController {
     @ResponseBody
     public List<TaskInfo> selectTaskInfo(HttpSession session, HttpServletRequest request) {
         int staff_id = ((TaskStaff) session.getAttribute("user")).getStaff_id();
-        String year = request.getParameter("year");
-        String month = request.getParameter("month");
+        Calendar cal = Calendar.getInstance();
+        int year = cal.get(Calendar.YEAR);
+        int month = cal.get(Calendar.MONTH) + 1;
         return infoService.selectTaskInfo(staff_id, year, month);
     }
 

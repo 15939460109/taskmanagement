@@ -18,4 +18,5 @@ D:\daima\gitsource\taskmanagement\src\main\java\com\czg\service\impl\DeptService
 D:\daima\gitsource\taskmanagement\src\main\java\com\czg\service\IInfoService.java
 D:\daima\gitsource\taskmanagement\src\main\java\com\czg\service\impl\StateServiceImpl.java
 D:\daima\gitsource\taskmanagement\src\main\java\com\czg\domain\TaskInfo.java
+D:\daima\gitsource\taskmanagement\src\main\java\com\czg\filter\LoginFilter.java
 D:\daima\gitsource\taskmanagement\src\main\java\com\czg\service\IStateService.java

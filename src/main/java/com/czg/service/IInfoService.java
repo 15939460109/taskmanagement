@@ -20,5 +20,5 @@ public interface IInfoService {
      * @param month
      * @return
      */
-    List<TaskInfo> selectTaskInfo(int staff_id, String year, String month);
+    List<TaskInfo> selectTaskInfo(int staff_id, int year, int month);
 }

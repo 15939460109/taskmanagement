@@ -20,7 +20,7 @@ public class InfoServiceImpl implements IInfoService {
     }
 
     @Override
-    public List<TaskInfo> selectTaskInfo(int staff_id, String year, String month) {
+    public List<TaskInfo> selectTaskInfo(int staff_id, int year, int month) {
         return infoDao.selectTaskInfo(staff_id, year, month);
     }
 }

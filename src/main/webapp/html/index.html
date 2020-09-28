@@ -3,21 +3,43 @@
 <head>
     <meta charset="UTF-8">
     <title>任务跟踪管理系统</title>
-    <link rel="stylesheet" type="text/css" href="css/themes/default/easyui.css">
-    <link rel="stylesheet" type="text/css" href="css/themes/icon.css">
-    <script src="js/jquery-1.10.2.min.js"></script>
-    <script type="text/javascript" src="js/jquery-migrate-1.2.1.min.js"></script>
-    <script type="text/javascript" src="js/jquery.easyui.min.js"></script>
-    <script type="text/javascript" src="js/jquery.fullcalendar.js?v=0.7"></script>
+    <link rel="stylesheet" type="text/css" href="../css/themes/default/easyui.css">
+    <link rel="stylesheet" type="text/css" href="../css/themes/icon.css">
+    <script src="../js/jquery-1.10.2.min.js"></script>
+    <script type="text/javascript" src="../js/jquery-migrate-1.2.1.min.js"></script>
+    <script type="text/javascript" src="../js/jquery.easyui.min.js"></script>
+    <script type="text/javascript" src="../js/jquery.fullcalendar.js?v=0.7"></script>
+    <style>
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            width: 120px;
+            height: 30px;
+            border: 1px solid #999;
+            text-align: center;
+        }
+
+        #prev, #next {
+            color: blue;
+            cursor: pointer;
+        }
+
+    </style>
     <script type="text/javascript" >
         $(function(){
             //页面加载完成后隐藏任务派发窗体
-            $('#win').window('close');
+            $('#win1').window('close');
+            $('#win2').window('close');
             //注册事件
             //关闭操作
             $('#closeForm').click(function (e) {
                 //关闭任务派发窗体
-                $('#win').window('close');
+                $('#win1').window('close');
             });
             //提交操作
             $("#submitTask").click(function () {
@@ -31,7 +53,7 @@
                 var taskState = $("#taskState").val();
                 $.ajax({
                     type: "post",
-                    url: "staff/addTaskInfo",
+                    url: "/staff/addTaskInfo",
                     data: {
                         "taskTime": taskTime,
                         "taskName": taskName,
@@ -46,7 +68,7 @@
                         if (data != null) {
                             alert(data.result);
                             //刷新页面
-                            window.location.href = "index.html";
+                            window.location.href = "html/index.html";
                         }
                     },
                     error: function () {
@@ -54,10 +76,32 @@
                     }
                 });
             });
+            //任务派发按钮操作
+            $("#taskDistribute").click(function () {
+                var date = new Date();
+                $('#win1').window('open');
+                $('#taskTime').prop("value", date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate());
+            });
+            //个人查询按钮操作
+            $("#personalQuery").click(function () {
+                $('#win2').window('open');
+                //查询数据
+                $.ajax({
+                    type: "get",
+                    url: "/staff/selectTaskInfo",
+                    dataType:"json",
+                    async: false,
+                    success: function (data) {
+                        data.forEach(function (item, index) {
+                            $("<tr><td>" + item.info_name + "</td><td>" + item.sendStaff.staff_name + "</td><td>" + item.staffLevel.level_name + "</td><td>" + item.info_create_date + "</td><td>" + item.staffState.state_name + "</td></tr>").appendTo("#tbody");
+                        })
+                    }
+                });
+            });
             //向后台请求找寻数据库中所有的任务级别
             $.ajax({
                 type: "get",
-                url: "staff/selectTaskLevel",
+                url: "/staff/selectTaskLevel",
                 dataType:"json",
                 async: false,   //默认时true 异步请求    为false时 同步请求
                 success: function (data) {
@@ -71,7 +115,7 @@
             //向后台请求找寻数据库中所有的任务状态
             $.ajax({
                 type: "get",
-                url: "staff/selectTaskState",
+                url: "/staff/selectTaskState",
                 dataType:"json",
                 async: false,
                 success: function (data) {
@@ -85,7 +129,7 @@
             //向后台请求找寻数据库中所有的部门信息
             $.ajax({
                 type: "get",
-                url: "staff/selectTaskDept",
+                url: "/staff/selectTaskDept",
                 dataType:"json",
                 async: false,
                 success: function (data) {
@@ -101,7 +145,7 @@
                 $("#staff").children().remove();
                 $.ajax({
                     type: "post",
-                    url: "staff/selectTaskStaff",
+                    url: "/staff/selectTaskStaff",
                     data: {"dept_id": $(e.target).val()},
                     dataType:"json",
                     async: false,
@@ -122,16 +166,16 @@
         <h3>主页</h3>
     </div>
     <div data-options="region:'west',split:true,title:'菜单'" style="width:150px;padding:10px;">
-        <a class="easyui-linkbutton" style="width: 100%; margin: 10px 0" data-options="iconCls:'icon-man'" >任务派发</a>
-        <a class="easyui-linkbutton" style="width: 100%; margin: 10px 0" data-options="iconCls:'icon-search'" >个人查询</a>
-        <a class="easyui-linkbutton" style="width: 100%; margin: 10px 0" data-options="iconCls:'icon-large-chart'" >统计报表</a>
-        <a class="easyui-linkbutton" style="width: 100%; margin: 10px 0" data-options="iconCls:'icon-large-shapes'" >权限设置</a>
+        <a id="taskDistribute" class="easyui-linkbutton" style="width: 100%; margin: 10px 0" data-options="iconCls:'icon-man'" >任务派发</a>
+        <a id="personalQuery" class="easyui-linkbutton" style="width: 100%; margin: 10px 0" data-options="iconCls:'icon-search'" >个人查询</a>
+        <a id="taskManage" class="easyui-linkbutton" style="width: 100%; margin: 10px 0" data-options="iconCls:'icon-edit'" >任务管控</a>
+        <a id="statisticalCopy" class="easyui-linkbutton" style="width: 100%; margin: 10px 0" data-options="iconCls:'icon-large-chart'" >统计报表</a>
     </div>
     <div data-options="region:'center',title:'任务管理'">
         <div class="easyui-fullCalendar" fit="true"></div>
     </div>
 
-    <div id="win" class="easyui-window" title="任务创建" style="width:600px;height:400px"
+    <div id="win1" class="easyui-window" title="任务创建" style="width:600px;height:400px"
          data-options="iconCls:'icon-save',modal:true">
         <div style="margin: 20px 160px">
             任务时间: <input type="text" id="taskTime" name="taskTime" disabled><br>
@@ -156,6 +200,24 @@
         </div>
         <a id="submitTask" style="margin-left: 230px" class="easyui-linkbutton" iconCls="icon-ok"></a>
         <a id="closeForm" style="margin-left: 60px" class="easyui-linkbutton" iconCls="icon-cancel"></a>
+    </div>
+
+    <div id="win2" class="easyui-window" title="个人任务表格" style="width:600px;height:400px"
+         data-options="iconCls:'icon-save',modal:true">
+        <div style="overflow: auto">
+            <table>
+                <thead>
+                <tr>
+                    <th>任务名</th>
+                    <th>派发人</th>
+                    <th>任务级别</th>
+                    <th>创建时间</th>
+                    <th>任务状态</th>
+                </tr>
+                </thead>
+                <tbody id="tbody"></tbody>
+            </table>
+        </div>
     </div>
 </body>
 </html>

@@ -6,8 +6,7 @@
 
     <!--系统访问主页  协议(http、https、ftp)://域名(ip地址):端口号/项目名/-->
     <welcome-file-list>
-        <welcome-file>login.html</welcome-file>
-        <welcome-file>index.html</welcome-file>
+        <welcome-file>/login.html</welcome-file>
     </welcome-file-list>
 
     <session-config>
@@ -33,6 +32,16 @@
         <servlet-name>taskmanagement</servlet-name>
         <url-pattern>/</url-pattern>
     </servlet-mapping>
+
+    <!--配置静态资源访问拦截-->
+    <filter>
+        <filter-name>html</filter-name>
+        <filter-class>com.czg.filter.LoginFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>html</filter-name>
+        <url-pattern>/html/*</url-pattern>
+    </filter-mapping>
 
     <!--上下文参数-->
     <context-param>
